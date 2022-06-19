@@ -39,7 +39,7 @@ public class Task {
     @Column(nullable = false, length = 30)
     private Status status;
 
-    @ManyToOne(cascade = {CascadeType.MERGE})
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "project_id")
     private Project project;
 }

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TaskCustomRepository {
 
-    List<Task> listTasksByFilters(LocalDate initialDate);
+    List<Task> listTasksByFilters(LocalDate initialDate, LocalDate finalDate, boolean strict);
 }

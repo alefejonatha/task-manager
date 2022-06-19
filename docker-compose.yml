@@ -1,0 +1,18 @@
+version: '3.5'
+
+services:
+  db:
+    image: "postgres:13"
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - spring_data:/var/lib/postgres
+
+volumes:
+  spring_data:
+
+#    Testando o container localmente com o comando = sudo mvn jib:dockerBuild

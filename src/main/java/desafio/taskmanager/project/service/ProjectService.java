@@ -1,6 +1,7 @@
 package desafio.taskmanager.project.service;
 
 import desafio.taskmanager.project.dto.ProjectPostRequestBody;
+import desafio.taskmanager.project.dto.ProjectPutRequestBody;
 import desafio.taskmanager.project.entity.Project;
 import desafio.taskmanager.project.mapper.ProjectMapper;
 import desafio.taskmanager.project.repository.ProjectRepository;
@@ -24,7 +25,9 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    //TODO listByTitle
+    public List<Project> findByTitleStartingWith(String title){
+        return projectRepository.findByTitleStartingWith(title);
+    }
 
     public Project findByIdOrElseThrowException(Long id){
         return projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found"));
@@ -35,12 +38,13 @@ public class ProjectService {
         return projectRepository.save(ProjectMapper.INSTANCE.toProject(projectPostRequestBody));
     }
 
-    //TODO update
+    public void update(ProjectPutRequestBody projectPutRequestBody){
+        findByIdOrElseThrowException(projectPutRequestBody.getId());
+        projectRepository.save(ProjectMapper.INSTANCE.toProject(projectPutRequestBody));
+    }
 
-    //TODO delete
-
-
-
-
+    public void delete(Long id){
+        projectRepository.delete(findByIdOrElseThrowException(id));
+    }
 
 }

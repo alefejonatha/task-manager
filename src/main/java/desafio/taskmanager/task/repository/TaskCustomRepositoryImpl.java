@@ -14,14 +14,27 @@ public class TaskCustomRepositoryImpl implements TaskCustomRepository {
     private EntityManager entityManager; //TODO FINAL
 
     @Override
-    public List<Task> listTasksByFilters(LocalDate initialDate) {
+    public List<Task> listTasksByFilters(LocalDate initialDate, LocalDate finalDate, boolean strict) {
         StringBuilder sb = new StringBuilder();
         sb.append("select s ");
         sb.append("from Task s ");
         sb.append("where s.initialDate >= :initialDate ");
 
+        if (finalDate != null) {
+            sb.append("and s.initialDate <= :finalDate ");
+
+            if(strict){
+                sb.append("and s.finalDate <= :finalDate");
+            }
+        }
+
         Query query = entityManager.createQuery(sb.toString());
         query.setParameter("initialDate", initialDate);
+
+        if (finalDate != null) {
+            query.setParameter("finalDate", finalDate);
+        }
+
         return query.getResultList();
     }
 

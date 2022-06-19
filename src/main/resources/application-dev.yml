@@ -1,0 +1,30 @@
+server:
+  error:
+    include-stacktrace: on_param
+
+#security:
+#  config:
+#    expiration: 3600000
+#    prefix: Bearer
+#    key: SECRET_KEY
+spring:
+  application:
+    name: task-manager
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baselineOnMigrate: true
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+

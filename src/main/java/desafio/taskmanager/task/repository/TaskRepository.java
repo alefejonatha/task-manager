@@ -18,6 +18,8 @@ public interface TaskRepository extends JpaRepository<Task, Long>, TaskCustomRep
     @Query("Select b from Task as b order by b.priority asc")
     List<Task> findAllOrderByPriority();
 
+    //TODO findAllByOrderByIdAsc
 
-    //@Query(value = "select p from Task where p.status = :status")
+    List<Task> findByTitleStartingWith(String title);
+
 }
