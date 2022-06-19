@@ -1,53 +1,52 @@
 package desafio.taskmanager.project.controller;
 
-import desafio.taskmanager.project.dto.ProjectPostRequestBody;
-import desafio.taskmanager.project.dto.ProjectPutRequestBody;
+import desafio.taskmanager.project.dto.ProjectPostDTO;
+import desafio.taskmanager.project.dto.ProjectPutDTO;
 import desafio.taskmanager.project.entity.Project;
 import desafio.taskmanager.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/project")
+@RequestMapping("/api/v1/projects")
 @RequiredArgsConstructor
-public class ProjectController {
+public class ProjectController implements ProjectControllerDocs{
     private final ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<List<Project>> findAllNonPageable() {
-        return new ResponseEntity<>(projectService.listAllNonPageable(), HttpStatus.OK);
+    public List<Project> findAll() {
+        return projectService.findAll();
     }
 
-    @GetMapping(path = "/find_by_title")
-    public ResponseEntity<List<Project>> findByTitleStartingWith(@RequestParam String title){
-        return new ResponseEntity<>(projectService.findByTitleStartingWith(title), HttpStatus.OK);
+    @GetMapping("/find_by_title")
+    public List<Project> findByTitleStartingWith(@RequestParam String title) {
+        return projectService.findByTitleStartingWith(title);
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<Project> findByIdOrElseThrowException(@PathVariable Long id) {
-        return new ResponseEntity<>(projectService.findByIdOrElseThrowException(id), HttpStatus.OK);
+    @GetMapping("/{id}")
+    public Project findById(@PathVariable Long id) {
+        return projectService.findById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Project> save(@RequestBody @Valid ProjectPostRequestBody projectPostRequestBody) {
-        return new ResponseEntity<>(projectService.save(projectPostRequestBody), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Project save(@RequestBody @Valid ProjectPostDTO projectPostDTO) {
+        return projectService.save(projectPostDTO);
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody @Valid ProjectPutRequestBody projectPutRequestBody){
-        projectService.update(projectPutRequestBody);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public Project update(@RequestBody @Valid ProjectPutDTO projectPutDTO) {
+        return projectService.update(projectPutDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         projectService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

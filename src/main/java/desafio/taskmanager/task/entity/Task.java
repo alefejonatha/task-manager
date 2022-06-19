@@ -20,15 +20,12 @@ public class Task {
     private String title;
 
     @Column(nullable = false)
-//    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate initialDate;
 
     @Column(nullable = false)
-//    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate finalDate;
 
     @Column(nullable = false)
-//    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime time;
 
     @Enumerated(EnumType.STRING)

@@ -1,4 +1,4 @@
-package desafio.taskmanager.project.dto;
+package desafio.taskmanager.user.dto;
 
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -6,16 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectPostRequestBody {
+public class JwtRequest {
+    @NotNull
+    @NotEmpty
+    private String username;
 
     @NotNull
     @NotEmpty
-    @Size(max = 255)
-    private String title;
-
+    private String password;
 }

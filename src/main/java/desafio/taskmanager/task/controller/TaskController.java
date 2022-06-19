@@ -1,15 +1,13 @@
 package desafio.taskmanager.task.controller;
 
-import desafio.taskmanager.task.dto.TaskPostRequestBody;
-import desafio.taskmanager.task.dto.TaskPutRequestBody;
+import desafio.taskmanager.task.dto.TaskPostDTO;
+import desafio.taskmanager.task.dto.TaskPutDTO;
 import desafio.taskmanager.task.entity.Task;
 import desafio.taskmanager.task.entity.TasksForToday;
-import desafio.taskmanager.task.mapper.TaskMapper;
 import desafio.taskmanager.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,70 +16,70 @@ import java.time.LocalTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/task")
+@RequestMapping("/api/v1/tasks")
 @RequiredArgsConstructor
-public class TaskController {
+public class TaskController implements TaskControllerDocs{
 
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<Task>> listAllNonPageable() {
-        return new ResponseEntity<>(taskService.listAllNonPageable(), HttpStatus.OK);
+    public List<Task> findAll() {
+        return taskService.findALl();
     }
 
-    @GetMapping(path = "/find_task_by_title" )
-    public ResponseEntity<List<Task>> findByTitleStartingWith(@RequestParam String title) {
-        return new ResponseEntity<>(taskService.findByTitleStartingWith(title), HttpStatus.OK);
+    @GetMapping("/find_by_title")
+    public List<Task> findByTitleStartingWith(@RequestParam String title) {
+        return taskService.findByTitleStartingWith(title);
     }
 
-    @GetMapping(path = "/find_task_by_id/{id}")
-    public ResponseEntity<Task> findTaskByIdOrElseThrowException(@PathVariable Long id) {
-        return new ResponseEntity<>(taskService.findTaskByIdOrElseThrowException(id), HttpStatus.OK);
+    @GetMapping("/find_by_id/{id}")
+    public Task findById(@PathVariable Long id) {
+        return taskService.findById(id);
     }
 
-    @GetMapping(path = "/tasks_by_project/{id}")
-    public ResponseEntity<List<Task>> listTasksByProject(@PathVariable Long id) {
-        return new ResponseEntity<>(taskService.listTasksByProject(id), HttpStatus.OK);
+    @GetMapping("/find_all_by_project/{id}")
+    public List<Task> findAllByProject(@PathVariable Long id) {
+        return taskService.findAllByProject(id);
     }
 
-    @GetMapping(path = "/order_by_status")
-    public ResponseEntity<List<Task>> findAllAndOrderByStatus() {
-        return new ResponseEntity<>(taskService.findAllAndOrderByStatus(), HttpStatus.OK);
+    @GetMapping("/order_by_status")
+    public List<Task> findAllAndOrderByStatus() {
+        return taskService.findAllAndOrderByStatus();
     }
 
-    @GetMapping(path = "/list_tasks_by_filters")
-    public ResponseEntity<List<Task>> listTasksByFilters(
+    @GetMapping("/list_tasks_by_filters")
+    public List<Task> listTasksByFilters(
             @RequestParam(name = "initialDate")
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate initialDate,
             @RequestParam(name = "finalDate", required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate finalDate,
             @RequestParam(name = "strict", required = false) boolean strict
     ) {
-        return new ResponseEntity<>(taskService.listTasksByFilters(initialDate, finalDate, strict), HttpStatus.OK);
+        return taskService.listTasksByFilters(initialDate, finalDate, strict);
     }
 
-    @GetMapping(path = "/list_tasks_for_today")
-    public ResponseEntity<TasksForToday> listTasksForToday(
+    @GetMapping("/list_tasks_for_today")
+    public TasksForToday listTasksForToday(
             @RequestParam(name = "availableTime")
             @DateTimeFormat(pattern = "H:mm") LocalTime availableTime
     ) {
-        return new ResponseEntity<>(taskService.listTasksForToday(availableTime), HttpStatus.OK);
+        return taskService.listTasksForToday(availableTime);
     }
 
     @PostMapping
-    public ResponseEntity<Task> save(@RequestBody @Valid TaskPostRequestBody taskPostRequestBody) {
-        return new ResponseEntity<>(taskService.save(taskPostRequestBody), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Task save(@RequestBody @Valid TaskPostDTO taskPostDTO) {
+        return taskService.save(taskPostDTO);
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody @Valid TaskPutRequestBody taskPutRequestBody) {
-        taskService.update(taskPutRequestBody);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public Task update(@RequestBody @Valid TaskPutDTO taskPutDTO) {
+        return taskService.update(taskPutDTO);
     }
 
-    @DeleteMapping(path = {"/{id}"})
-    public ResponseEntity<Void> delete(@PathVariable long id) {
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         taskService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

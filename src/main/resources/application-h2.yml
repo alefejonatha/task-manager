@@ -9,8 +9,17 @@ spring:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
     username: sa
-    password: sa
+    password:
   h2:
     console:
       enabled: true
+
+security:
+  config:
+    expiration: 3600000
+    prefix: Bearer
+    key: 36a709c9-051c-49bc-bdc5-d3045eed5c8a
+
+
+
 

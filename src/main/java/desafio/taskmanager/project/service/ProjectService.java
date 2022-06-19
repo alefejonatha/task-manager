@@ -1,15 +1,15 @@
 package desafio.taskmanager.project.service;
 
-import desafio.taskmanager.project.dto.ProjectPostRequestBody;
-import desafio.taskmanager.project.dto.ProjectPutRequestBody;
+import desafio.taskmanager.project.dto.ProjectPostDTO;
+import desafio.taskmanager.project.dto.ProjectPutDTO;
 import desafio.taskmanager.project.entity.Project;
+import desafio.taskmanager.project.exception.ProjectAlreadyExistsException;
+import desafio.taskmanager.project.exception.ProjectNotFoundException;
 import desafio.taskmanager.project.mapper.ProjectMapper;
 import desafio.taskmanager.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,32 +19,47 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    //TODO ListAll Pageable
 
-    public List<Project> listAllNonPageable() {
+    public List<Project> findAll() {
         return projectRepository.findAll();
     }
 
-    public List<Project> findByTitleStartingWith(String title){
+    public List<Project> findByTitleStartingWith(String title) {
         return projectRepository.findByTitleStartingWith(title);
     }
 
-    public Project findByIdOrElseThrowException(Long id){
-        return projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project not found"));
+    public Project findById(Long id) {
+        return verifyAndGet(id);
     }
 
     @Transactional
-    public Project save(ProjectPostRequestBody projectPostRequestBody) {
-        return projectRepository.save(ProjectMapper.INSTANCE.toProject(projectPostRequestBody));
+    public Project save(ProjectPostDTO projectPostDTO) {
+        verifyIfExists(projectPostDTO.getTitle());
+        return projectRepository.save(ProjectMapper.INSTANCE.toProject(projectPostDTO));
     }
 
-    public void update(ProjectPutRequestBody projectPutRequestBody){
-        findByIdOrElseThrowException(projectPutRequestBody.getId());
-        projectRepository.save(ProjectMapper.INSTANCE.toProject(projectPutRequestBody));
+    public Project update(ProjectPutDTO projectPutDTO) {
+        findById(projectPutDTO.getId());
+        verifyIfExists(projectPutDTO.getTitle());
+        return projectRepository.save(ProjectMapper.INSTANCE.toProject(projectPutDTO));
     }
 
-    public void delete(Long id){
-        projectRepository.delete(findByIdOrElseThrowException(id));
+    public void delete(Long id) {
+        projectRepository.delete(verifyAndGet(id));
     }
+
+    public Project verifyAndGet(Long id) {
+        Project foundProject = projectRepository.findById(id)
+                .orElseThrow(() -> new ProjectNotFoundException(id));
+        return foundProject;
+    }
+
+    private void verifyIfExists(String title) {
+        projectRepository.findByTitle(title)
+                .ifPresent(project -> {
+                    throw new ProjectAlreadyExistsException(title);
+                });
+    }
+
 
 }
