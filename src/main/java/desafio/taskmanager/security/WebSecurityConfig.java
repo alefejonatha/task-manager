@@ -45,17 +45,17 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-//TODO DESCOMENTAR
-//                .antMatchers(ACCESS_PROJECT_URL).hasRole(ROLE_ADMIN)
-//                .antMatchers(ACCESS_TASK_URL).hasAnyRole(ROLE_USER, ROLE_ADMIN)
 
-                .antMatchers(H2_CONSOLE_URL, ACCESS_USER_URL, ACCESS_PROJECT_URL, ACCESS_TASK_URL).permitAll() //TODO RETIRAR PROJECT E TASK
+                .antMatchers(ACCESS_PROJECT_URL).hasRole(ROLE_ADMIN)
+                .antMatchers(ACCESS_TASK_URL).hasAnyRole(ROLE_USER, ROLE_ADMIN)
+
+                .antMatchers(H2_CONSOLE_URL, ACCESS_USER_URL, ACCESS_PROJECT_URL, ACCESS_TASK_URL).permitAll()
                 .antMatchers(SWAGGER_RESOURCES).permitAll()
 
                 .anyRequest()
                 .authenticated()
                 .and()
-                .headers().frameOptions().sameOrigin() //TODO RETIRAR E TESTAR
+                .headers().frameOptions().sameOrigin()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -63,7 +63,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public ServletRegistrationBean h2servletRegistration() { //TODO RETIRAR E TESTAR
+    public ServletRegistrationBean h2servletRegistration() {
         ServletRegistrationBean registrationBean = new ServletRegistrationBean(new WebdavServlet());
         registrationBean.addUrlMappings(H2_CONSOLE_URL);
         return registrationBean;
