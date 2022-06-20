@@ -49,7 +49,7 @@ public class WebSecurityConfig {
                 .antMatchers(ACCESS_PROJECT_URL).hasRole(ROLE_ADMIN)
                 .antMatchers(ACCESS_TASK_URL).hasAnyRole(ROLE_USER, ROLE_ADMIN)
 
-                .antMatchers(H2_CONSOLE_URL, ACCESS_USER_URL, ACCESS_PROJECT_URL, ACCESS_TASK_URL).permitAll()
+                .antMatchers(H2_CONSOLE_URL, ACCESS_USER_URL).permitAll()
                 .antMatchers(SWAGGER_RESOURCES).permitAll()
 
                 .anyRequest()
